@@ -65,7 +65,6 @@ def Endsplit(counts):
     result=b[a.index(max(a))]
     return result
 
-
 def is_numeric(value):
     """Test if a value is numeric."""
     return isinstance(value, int) or isinstance(value, float)
@@ -74,7 +73,7 @@ class Question:
     """A Question is used to partition a dataset.
     This class just records a 'column number' (e.g., 0 for Color) and a
     'column value' (e.g., Green). The 'match' method is used to compare
-    the feature value in an example to the feature value stored in thequestion
+    the feature value in an example to the feature value stored in the
     question. See the demo below.
     """
 
@@ -120,7 +119,6 @@ def entropy(rows):
             return 0.0
         origin -= (prob_of_lbl*np.log2(prob_of_lbl)+prob_of_rbl*np.log2(prob_of_rbl))
     return origin
-
 
 def info_gain(left, right, current_uncertainty):
     """Information Gain.
