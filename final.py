@@ -6,7 +6,7 @@
 
 from pandas import read_csv
 import numpy
-dataset = read_csv('/home/aiying/Desktop/data.csv')
+dataset = read_csv('/home/aiying//data1.csv',low_memory=False)
 
 
 # In[155]:
@@ -37,19 +37,19 @@ s.sort_values(ascending=True)
 # In[145]:
 
 
-dataset.mean()
+dataset.median()
 
 
 # In[149]:
 
 
-dataset.fillna(dataset.mean(),inplace=True)
+dataset.fillna(dataset.median(),inplace=True)
 
 
 # In[151]:
 
 
-dataset.to_csv('addmean.csv')
+dataset.to_csv('addmean1.csv')
 
 
 # In[152]:
