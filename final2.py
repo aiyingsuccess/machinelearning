@@ -1,47 +1,26 @@
 # For Python 2 / 3 compatability
 from __future__ import print_function
+from pandas import read_csv
+
+import numpy
+dataset = read_csv('/home/aiying/machinelearning/data1.csv')
+
+import pandas as pd
+import numpy as np
+
+
 import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-k=10
-weight=[]
-weight.append(0)
-s=0
-for i in range(2,k+1):
-    s+=0.9**i
-for j in range(2,k+1):
-    weight.append(0.9**j/s)
-print("weight",weight)
+testcolumn=4
 
-def computey(k,row):
-    return sum([m*n for m in weight for n in row])
-
-def generatedata(m,k):
-    data=[]
-    for i in range(m):
-        row=[]
-        seed=random.random()
-        if(seed<0.5):
-            x1=0
-        else:
-            x1=1
-        row.append(x1)
-        for j in range(k-1):
-            if(random.random()<0.75):
-                row.append(x1)
-            else:
-                row.append(1-x1)
-        if(computey(k,row)>=0.5):
-            row.append(x1)
-        else:
-            row.append(1-x1)
-        data.append(row)
-    return data
-                
-
-header = ["x"+i for i in list(map(str,list(range(1,k+1))))]
-header.append("Y")
+dataset.fillna(dataset.median(),inplace=True)
+dataset.median()
+dataset.to_csv('/home/aiying/machinelearning/addmean1.csv')
+ds=dataset.values.tolist()
+                 
+header = ["x"+i for i in list(map(str,list(range(1,140+1))))]
 
 def unique_vals(rows, col):
     """Find the unique values for a column in a dataset."""
@@ -52,7 +31,7 @@ def class_counts(rows):
     counts = {}  # a dictionary of label -> count.
     for row in rows:
         # in our dataset format, the label is always the last column
-        label = row[-1]
+        label = row[testcolumn]
         if label not in counts:
             counts[label] = 0
         counts[label] += 1
@@ -131,6 +110,8 @@ def find_best_split(rows):
     n_features = len(rows[0]) - 1  # number of columns
 
     for col in range(n_features):  # for each feature
+        if col==testcolumn:
+            continue
 
         values = set([row[col] for row in rows])  # unique values in the column
 
@@ -232,21 +213,21 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
-def erroroftree():
+def accuracyoftree():
     m=30
-    training_data=generatedata(m,k)
+    training_data=ds[0:6000]
     my_tree = build_tree(training_data)
     print_tree(my_tree)
 
     # Evaluate
-    testing_data = generatedata(m,k)
+    testing_data = ds[6001:6051]
     accurate=0
     for row in testing_data:
         print ("Actual: %s. Predicted: %s" %
-               (row[-1], print_leaf(classify(row, my_tree))))
-        if list(classify(row,my_tree).keys())[0]==row[-1]:
+               (row[testcolumn], print_leaf(classify(row, my_tree))))
+        if list(classify(row,my_tree).keys())[0]==row[testcolumn] and len(list(classify(row,my_tree).keys()))==1:
             accurate=accurate+1
-    print(1-accurate/len(testing_data))
+    print('accurate rate is',accurate/len(testing_data))
 
 def testm():
     Result=[]
@@ -255,14 +236,14 @@ def testm():
         M.append(m)
         average=0.0
         for repeat in range(50):                         #need to be set correctly to get the average value
-            training_data=generatedata(m,k)
+            training_data=ds[0:50]
             my_tree = build_tree(training_data)
 
             # Evaluate
-            testing_data = generatedata(m,k)
+            testing_data = ds[51:71]
             accurate=0
             for row in testing_data:
-                if list(classify(row,my_tree).keys())[0]==row[-1]:
+                if list(classify(row,my_tree).keys())[0]==row[testcolumn]:
                     accurate=accurate+1
             average=average+accurate/len(testing_data)
             # print(accurate/len(testing_data))
@@ -273,6 +254,5 @@ def testm():
     plt.plot(M, Result)
     plt.show()
 
-erroroftree()
+accuracyoftree()
 # testm()
-
