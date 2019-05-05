@@ -13,21 +13,22 @@ print(df2)
 print(df2['one'])
 print(pd.isna(df2['one']['a']))
 print(type(df2['one']['a']))
-dt=df.fillna(0)
-values = set(dt['one'])
+df2.fillna(np.nan,inplace=True)
+print('df2',df2)
+values = df2.four.unique()
 print('val',values)
-df = pd.DataFrame([[np.nan, 2, np.nan, 0],
+dt = pd.DataFrame([[np.nan, 2, np.nan, 0],
                     [3, 4, np.nan, 1],
                     [np.nan, np.nan, np.nan, 5],
                     [np.nan, 3, np.nan, 4]],
                  columns=list('ABCD'))
-
-print(df)
+print(dt)
 
 # dt=df.fillna('ss')
-
 # print(dt)
 
-values = set(df['A'])
-print(values)
-
+print(pd.isna(dt['A'][0]))
+values2 = set([dt['A'][0],dt['B'][0],dt['C'][0],dt['D'][0]])
+print(values2)
+print(dt.A.unique())
+print(type(dt.A.unique()))
