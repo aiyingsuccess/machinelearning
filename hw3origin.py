@@ -227,9 +227,11 @@ def build_treelimitdepth(rows,noise,depth,d):
 
 def build_treelimitsize(rows,noise,s):
    
+    if len(rows)<=s:
+        return Leaf(rows)
     gain, question = find_best_split(rows)
 
-    if gain == 0 or len(rows)<=s:
+    if gain == 0:
         return Leaf(rows)
 
     if question.column>=16:

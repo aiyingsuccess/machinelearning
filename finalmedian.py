@@ -15,13 +15,13 @@ import matplotlib.pyplot as plt
 
 
 
-dataset.fillna('N',inplace=True)
-dataset.to_csv('/home/aiying/machinelearning/addmean1.csv')
+dataset.fillna(dataset.median(),inplace=True)
+dataset.to_csv('/home/aiying/machinelearning/addmedian1.csv')
 header = list(dataset)
 ds=dataset.values.tolist()              
 
-# testcolumn=header.index('imaginedexplicit1')
-testcolumn=header.index('expgender')
+testcolumn=header.index('imaginedexplicit1')
+# testcolumn=header.index('expgender')
 
 
 
@@ -75,15 +75,13 @@ def partition(rows, question):
     For each row in the dataset, check if it matches the question. If
     so, add it to 'true rows', otherwise, add it to 'false rows'.
     """
-    true_rows, false_rows, N_rows= [],[],[]
+    true_rows, false_rows = [], []
     for row in rows:
-        if question.match(row)==True:
+        if question.match(row):
             true_rows.append(row)
-        elif question.match(row)==2:
-            N_rows.append(row)
         else:
             false_rows.append(row)
-    return true_rows, false_rows, N_rows
+    return true_rows, false_rows
 
 def entropy(rows):
     #Entropy
@@ -117,16 +115,13 @@ def find_best_split(rows):
     for col in range(n_features):  # for each feature
         if col==testcolumn:
             continue
-
         values = set([row[col] for row in rows])  # unique values in the column
 
         for val in values:  # for each value
-            if val=='N':
-                continue
 
             question = Question(col, val)
 
-            true_rows, false_rows, N_rows = partition(rows, question)
+            true_rows, false_rows = partition(rows, question)
 
             if len(true_rows) == 0 or len(false_rows) == 0:
                 continue
@@ -157,12 +152,11 @@ class Decision_Node:
                  question,
                  true_branch,
                  false_branch,
-                 N_branch):
+                 ):
         self.question = question
         self.true_branch = true_branch
         self.false_branch = false_branch
-        self.N_branch=N_branch
-
+    
 
 def build_tree(rows):
    
@@ -171,7 +165,7 @@ def build_tree(rows):
     if gain == 0:
         return Leaf(rows)
 
-    true_rows, false_rows, N_rows = partition(rows, question)
+    true_rows, false_rows = partition(rows, question)
 
     # Recursively build the true branch.
     true_branch = build_tree(true_rows)
@@ -179,42 +173,7 @@ def build_tree(rows):
     # Recursively build the false branch.
     false_branch = build_tree(false_rows)
 
-    if len(N_rows)>0:
-        N_branch = build_tree(N_rows)
-    else:
-        if len(true_rows)>=len(false_rows):
-            N_branch=true_branch
-        else:
-            N_branch=false_branch          
-    return Decision_Node(question, true_branch, false_branch, N_branch)
-
-def build_treelimitsize(rows,s):
-   
-    if len(rows)<=s:
-        return Leaf(rows)
-
-    gain, question = find_best_split(rows)
-
-    if gain == 0:
-        return Leaf(rows)
-
-    true_rows, false_rows,N_rows = partition(rows, question)
-
-    # Recursively build the true branch.
-    true_branch = build_treelimitsize(true_rows,s)
-
-    # Recursively build the false branch.
-    false_branch = build_treelimitsize(false_rows,s)
-
-    if len(N_rows)>0:
-        N_branch = build_treelimitsize(N_rows,s)
-    else:
-        if len(true_rows)>=len(false_rows):
-            N_branch=true_branch
-        else:
-            N_branch=false_branch          
-
-    return Decision_Node(question, true_branch, false_branch,N_branch)
+    return Decision_Node(question, true_branch, false_branch)
 
 
 def print_tree(node, spacing=""):
@@ -236,8 +195,6 @@ def print_tree(node, spacing=""):
     print (spacing + '--> False:')
     print_tree(node.false_branch, spacing + "  ")
 
-    print (spacing + '--> Unkown:')
-    print_tree(node.N_branch, spacing + "  ")
 
 
 def classify(row, node):
@@ -247,10 +204,8 @@ def classify(row, node):
     if isinstance(node, Leaf):
         return node.predictions
 
-    if node.question.match(row)==True:
+    if node.question.match(row):
         return classify(row, node.true_branch)
-    elif node.question.match(row)==2:
-        return classify(row, node.N_branch)
     else:
         return classify(row, node.false_branch)
 
@@ -263,13 +218,13 @@ def print_leaf(counts):
     return probs
 
 def accuracyoftree():
-    training_data=ds[0:2000]
+    training_data=ds[0:6000]
     # my_tree = build_tree(training_data)
-    my_tree = build_treelimitsize(training_data,3)
+    my_tree = build_tree(training_data)
     print_tree(my_tree)
 
     # Evaluate
-    testing_data = ds[2000:2050]
+    testing_data = ds[6000:6050]
     accurate=0
     for row in testing_data:
         print ("Actual: %s. Predicted: %s" %
