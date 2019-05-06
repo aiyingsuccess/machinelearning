@@ -143,7 +143,6 @@ class Decision_Node:
     """A Decision Node asks a question.
     This holds a reference to the question, and to the two child nodes.
     """
-
     def __init__(self,
                  question,
                  true_branch,
@@ -190,8 +189,6 @@ def print_tree(node, spacing=""):
     # Call this function recursively on the false branch
     print (spacing + '--> False:')
     print_tree(node.false_branch, spacing + "  ")
-
-
 
 def classify(row, node):
     """See the 'rules of recursion' above."""
