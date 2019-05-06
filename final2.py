@@ -13,14 +13,15 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-testcolumn=4
 
-dataset.fillna(dataset.median(),inplace=True)
-dataset.median()
+
+dataset.fillna('N',inplace=True)
 dataset.to_csv('/home/aiying/machinelearning/addmean1.csv')
-ds=dataset.values.tolist()
-                 
-header = ["x"+i for i in list(map(str,list(range(1,140+1))))]
+header = list(dataset)
+ds=dataset.values.tolist()              
+
+testcolumn=header.index('imaginedexplicit1')
+
 
 def unique_vals(rows, col):
     """Find the unique values for a column in a dataset."""
@@ -58,7 +59,7 @@ class Question:
         if is_numeric(val):
             return val >= self.value
         else:
-            return val == self.value
+            return 2
 
     def __repr__(self):
         condition = "=="
@@ -72,13 +73,15 @@ def partition(rows, question):
     For each row in the dataset, check if it matches the question. If
     so, add it to 'true rows', otherwise, add it to 'false rows'.
     """
-    true_rows, false_rows = [], []
+    true_rows, false_rows, N_rows= [],[],[]
     for row in rows:
-        if question.match(row):
+        if question.match(row)==True:
             true_rows.append(row)
+        elif question.match(row)==2:
+            N_rows.append(row)
         else:
             false_rows.append(row)
-    return true_rows, false_rows
+    return true_rows, false_rows, N_rows
 
 def entropy(rows):
     #Entropy
@@ -116,10 +119,12 @@ def find_best_split(rows):
         values = set([row[col] for row in rows])  # unique values in the column
 
         for val in values:  # for each value
+            if val=='N':
+                continue
 
             question = Question(col, val)
 
-            true_rows, false_rows = partition(rows, question)
+            true_rows, false_rows, N_rows = partition(rows, question)
 
             if len(true_rows) == 0 or len(false_rows) == 0:
                 continue
@@ -149,10 +154,12 @@ class Decision_Node:
     def __init__(self,
                  question,
                  true_branch,
-                 false_branch):
+                 false_branch,
+                 N_branch):
         self.question = question
         self.true_branch = true_branch
         self.false_branch = false_branch
+        self.N_branch=N_branch
 
 
 def build_tree(rows):
@@ -162,7 +169,7 @@ def build_tree(rows):
     if gain == 0:
         return Leaf(rows)
 
-    true_rows, false_rows = partition(rows, question)
+    true_rows, false_rows, N_rows = partition(rows, question)
 
     # Recursively build the true branch.
     true_branch = build_tree(true_rows)
@@ -170,7 +177,14 @@ def build_tree(rows):
     # Recursively build the false branch.
     false_branch = build_tree(false_rows)
 
-    return Decision_Node(question, true_branch, false_branch)
+    if len(N_rows)>0:
+        N_branch = build_tree(N_rows)
+    else:
+        if len(true_rows)>=len(false_rows):
+            N_branch=true_branch
+        else:
+            N_branch=false_branch          
+    return Decision_Node(question, true_branch, false_branch, N_branch)
 
 
 def print_tree(node, spacing=""):
@@ -192,6 +206,9 @@ def print_tree(node, spacing=""):
     print (spacing + '--> False:')
     print_tree(node.false_branch, spacing + "  ")
 
+    print (spacing + '--> Unkown:')
+    print_tree(node.N_branch, spacing + "  ")
+
 
 def classify(row, node):
     """See the 'rules of recursion' above."""
@@ -200,8 +217,10 @@ def classify(row, node):
     if isinstance(node, Leaf):
         return node.predictions
 
-    if node.question.match(row):
+    if node.question.match(row)==True:
         return classify(row, node.true_branch)
+    elif node.question.match(row)==2:
+        return classify(row, node.N_branch)
     else:
         return classify(row, node.false_branch)
 
@@ -214,13 +233,12 @@ def print_leaf(counts):
     return probs
 
 def accuracyoftree():
-    m=30
-    training_data=ds[0:6000]
+    training_data=ds[0:5000]
     my_tree = build_tree(training_data)
     print_tree(my_tree)
 
     # Evaluate
-    testing_data = ds[6001:6051]
+    testing_data = ds[6001:6111]
     accurate=0
     for row in testing_data:
         print ("Actual: %s. Predicted: %s" %
