@@ -22,7 +22,7 @@ ds=dataset.values.tolist()
 
 # testcolumn=header.index('imaginedexplicit1')
 # testcolumn=header.index('expgender')
-testcolumn=4
+testcolumn=3
 
 
 def unique_vals(rows, col):
@@ -179,13 +179,13 @@ def build_tree(rows):
     # Recursively build the false branch.
     false_branch = build_tree(false_rows)
 
-    if len(N_rows)>0:
-        N_branch = build_tree(N_rows)
-    else:
-        if len(true_rows)>=len(false_rows):
-            N_branch=true_branch
-        else:
-            N_branch=false_branch          
+    # if len(N_rows)>0:
+    N_branch = build_tree(N_rows)
+    # else:
+    #     if len(true_rows)>=len(false_rows):
+    #         N_branch=true_branch
+    #     else:
+    #         N_branch=false_branch          
     return Decision_Node(question, true_branch, false_branch, N_branch)
 
 def build_treelimitsize(rows,s):
