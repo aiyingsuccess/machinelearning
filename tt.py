@@ -44,3 +44,7 @@ print(type(dt.A.unique()))
 print(isinstance(2,int)==2)
 if 2:
    print('a')
+
+
+testcolumn = 1
+print(type(testcolumn))

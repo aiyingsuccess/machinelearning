@@ -3,7 +3,7 @@ from __future__ import print_function
 from pandas import read_csv
 
 import numpy
-dataset = read_csv('/home/aiying/machinelearning/data1.csv')
+dataset = read_csv('/home/aiying/Projects/Machinelearning/data1.csv')
 
 import pandas as pd
 import numpy as np
@@ -16,13 +16,13 @@ import matplotlib.pyplot as plt
 
 
 dataset.fillna(dataset.median(),inplace=True)
-dataset.to_csv('/home/aiying/machinelearning/addmedian1.csv')
+dataset.to_csv('/home/aiying/Projects/Machinelearning/addmedian1.csv')
 header = list(dataset)
 ds=dataset.values.tolist()              
 
 testcolumn=header.index('imaginedexplicit1')
 # testcolumn=header.index('expgender')
-
+# testcolumn=
 
 
 def unique_vals(rows, col):
@@ -218,13 +218,13 @@ def print_leaf(counts):
     return probs
 
 def accuracyoftree():
-    training_data=ds[0:6000]
+    training_data=ds[0:5000]
     # my_tree = build_tree(training_data)
     my_tree = build_tree(training_data)
     print_tree(my_tree)
 
     # Evaluate
-    testing_data = ds[6000:6050]
+    testing_data = ds[5000:5050]
     accurate=0
     for row in testing_data:
         print ("Actual: %s. Predicted: %s" %

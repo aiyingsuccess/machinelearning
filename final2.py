@@ -3,7 +3,7 @@ from __future__ import print_function
 from pandas import read_csv
 
 import numpy
-dataset = read_csv('/home/aiying/machinelearning/data1.csv')
+dataset = read_csv('/home/aiying/Projects/Machinelearning/data1.csv')
 
 import pandas as pd
 import numpy as np
@@ -16,13 +16,13 @@ import matplotlib.pyplot as plt
 
 
 dataset.fillna('N',inplace=True)
-dataset.to_csv('/home/aiying/machinelearning/addmean1.csv')
+dataset.to_csv('/home/aiying/Projects/Machinelearning/addmean1.csv')
 header = list(dataset)
 ds=dataset.values.tolist()              
 
 # testcolumn=header.index('imaginedexplicit1')
-testcolumn=header.index('expgender')
-
+# testcolumn=header.index('expgender')
+testcolumn=4
 
 
 def unique_vals(rows, col):
