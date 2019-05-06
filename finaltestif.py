@@ -1,14 +1,14 @@
 # For Python 2 / 3 compatability
 from __future__ import print_function
 from pandas import read_csv
-
+from random import random
 import numpy
+
 dataset = read_csv('/home/aiying/Machinelearning/data1.csv')
 
 import pandas as pd
-
-import random
 import numpy as np
+
 import matplotlib.pyplot as plt
 
 dataset.fillna('N',inplace=True)
@@ -176,7 +176,9 @@ def build_tree(rows):
     if len(N_rows)>0:
         N_branch = build_tree(N_rows)
     else:
-        if len(true_rows)>=len(false_rows):
+        P=len(true_rows)/len(rows)
+        r=random()
+        if r<=P:
             N_branch=true_branch
         else:
             N_branch=false_branch          
