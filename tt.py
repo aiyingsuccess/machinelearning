@@ -66,5 +66,4 @@ from random import random
 # reset the seed
 # seed(7)
 # generate some random numbers
-random.random()
-print(a)
+random()
