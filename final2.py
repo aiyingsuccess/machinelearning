@@ -3,27 +3,23 @@ from __future__ import print_function
 from pandas import read_csv
 
 import numpy
-dataset = read_csv('/home/aiying/Projects/Machinelearning/data1.csv')
+dataset = read_csv('/home/aiying/Machinelearning/data1.csv')
 
 import pandas as pd
 import numpy as np
-
 
 import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
 dataset.fillna('N',inplace=True)
-dataset.to_csv('/home/aiying/Projects/Machinelearning/addmean1.csv')
+dataset.to_csv('/home/aiying/Machinelearning/addmean1.csv')
 header = list(dataset)
 ds=dataset.values.tolist()              
 
 # testcolumn=header.index('imaginedexplicit1')
 # testcolumn=header.index('expgender')
-testcolumn=3
-
+testcolumn=0
 
 def unique_vals(rows, col):
     """Find the unique values for a column in a dataset."""
@@ -117,9 +113,8 @@ def find_best_split(rows):
     for col in range(n_features):  # for each feature
         if col==testcolumn:
             continue
-
+        
         values = set([row[col] for row in rows])  # unique values in the column
-
         for val in values:  # for each value
             if val=='N':
                 continue
@@ -179,13 +174,13 @@ def build_tree(rows):
     # Recursively build the false branch.
     false_branch = build_tree(false_rows)
 
-    # if len(N_rows)>0:
-    N_branch = build_tree(N_rows)
-    # else:
-    #     if len(true_rows)>=len(false_rows):
-    #         N_branch=true_branch
-    #     else:
-    #         N_branch=false_branch          
+    if len(N_rows)>0:
+        N_branch = build_tree(N_rows)
+    else:
+        if len(true_rows)>=len(false_rows):
+            N_branch=true_branch
+        else:
+            N_branch=false_branch          
     return Decision_Node(question, true_branch, false_branch, N_branch)
 
 def build_treelimitsize(rows,s):
@@ -262,14 +257,36 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
+def accuracyoftreeall():
+    training_data=ds[0:3000]
+    testcolumnset=list(range(0,140))
+    Accurate=[]
+    for i in testcolumnset:
+        global testcolumn
+        testcolumn=testcolumnset[i]
+        my_tree = build_tree(training_data)
+        # print_tree(my_tree)
+        print('testclumn',testcolumn)
+        # Evaluate
+        testing_data = ds[3000:3500]
+        accurate=0
+        for row in testing_data:
+            print ("Actual: %s. Predicted: %s" %
+                (row[testcolumn], print_leaf(classify(row, my_tree))))
+            if list(classify(row,my_tree).keys())[0]==row[testcolumn] and len(list(classify(row,my_tree).keys()))==1:
+                accurate=accurate+1
+        Accurate.append(accurate/len(testing_data))    
+        print('accurate rate is',accurate/len(testing_data))
+    print(Accurate)
+
 def accuracyoftree():
-    training_data=ds[0:2000]
+    training_data=ds[0:4000]
     # my_tree = build_tree(training_data)
-    my_tree = build_treelimitsize(training_data,3)
+    my_tree = build_tree(training_data)
     print_tree(my_tree)
 
     # Evaluate
-    testing_data = ds[2000:2050]
+    testing_data = ds[4000:4500]
     accurate=0
     for row in testing_data:
         print ("Actual: %s. Predicted: %s" %
@@ -303,5 +320,6 @@ def testm():
     plt.plot(M, Result)
     plt.show()
 
-accuracyoftree()
+accuracyoftreeall()
+# accuracyoftree
 # testm()

@@ -46,5 +46,13 @@ if 2:
    print('a')
 
 
-testcolumn = 1
-print(type(testcolumn))
+
+testc=1
+
+def g():
+   global testc
+   testc=testc+1
+
+g()
+
+print(testc)
