@@ -231,6 +231,9 @@ def accuracyoftreeall():
         Accurate.append(accurate/len(testing_data))    
         print('accurate rate is',accurate/len(testing_data))
     print(Accurate)
+    with open('4000.txt', 'w') as f:
+        for item in Accurate:
+            f.write("%s\n" % item)
 
 def accuracyoftree():
     training_data=ds[0:3000]
@@ -273,6 +276,33 @@ def testm():
     plt.plot(M, Result)
     plt.show()
 
+def accuracyoftreeall4000(): 
+    training_data=ds[0:4000]
+    testcolumnset=list(range(0,len(header)))
+    Accurate=[]
+    for i in testcolumnset:
+        global testcolumn
+        testcolumn=testcolumnset[i]
+        my_tree = build_tree(training_data)
+        # print_tree(my_tree)
+        print('testclumn',testcolumn)
+        # Evaluate
+        testing_data = ds[4000:4500]
+        accurate=0
+        for row in testing_data:
+            print ("Actual: %s. Predicted: %s" %
+                (row[testcolumnset[i]], print_leaf(classify(row, my_tree))))
+            if list(classify(row,my_tree).keys())[0]==row[testcolumnset[i]] and len(list(classify(row,my_tree).keys()))==1:
+                accurate=accurate+1
+        Accurate.append(accurate/len(testing_data))    
+        print('accurate rate is',accurate/len(testing_data))
+    print(Accurate)
+    with open('4000.txt', 'w') as f:
+        for item in Accurate:
+            f.write("%s\n" % item)
+
+
 accuracyoftreeall()
+accuracyoftreeall4000()
 # accuracyoftree()
 # testm()
