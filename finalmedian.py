@@ -3,22 +3,19 @@ from __future__ import print_function
 from pandas import read_csv
 
 import numpy as np
-dataset = read_csv('/home/aiying/Machinelearning/addmeanorigin.csv')
 
 import pandas as pd
 
-
 import random
-import numpy as np
 import matplotlib.pyplot as plt
-
+dataset = read_csv('/home/aiying/Machinelearning/addmeanorigin.csv')
 # dataset.fillna(dataset.median(),inplace=True)
 # dataset.to_csv('/home/aiying/Machinelearning/addmedian1.csv')
-header = list(dataset)
+headers = list(dataset)
 ds=dataset.values.tolist()              
 
-# testcolumn=header.index('imaginedexplicit1')
-# testcolumn=header.index('expgender')
+# testcolumn=headers.index('imaginedexplicit1')
+# testcolumn=headers.index('expgender')
 testcolumn=0
 
 def unique_vals(rows, col):
@@ -64,7 +61,7 @@ class Question:
         if is_numeric(self.value):
             condition = ">="
         return "Is %s %s %s?" % (
-            header[self.column], condition, str(self.value))
+            headers[self.column], condition, str(self.value))
 
 def partition(rows, question):
     """Partitions a dataset.
@@ -210,39 +207,41 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
-def accuracyoftreeall():
-    training_data=ds[0:2000]
-    testcolumnset=list(range(0,len(header)))
+def accuracyoftreeall(m):
+    training_data=ds[0:m]
+    testcolumnset=[0,1,5,7,9,14,15,16,17,18,19,20,21,22,23,24,25,27,29,30,31,33,34,36,37,38,40,41,42,44,46,50,52,53,54,55,58,59,60,61,62,63,64,
+    65,66,67,68,69,70,71,72,76,77,78,91,92,93,94,95,96,97,98,99,100,101,102,103,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,
+    132,133,134,135,136,137,138,139,142]
     Accurate=[]
     for i in testcolumnset:
         global testcolumn
-        testcolumn=testcolumnset[i]
+        testcolumn=i
         my_tree = build_tree(training_data)
         # print_tree(my_tree)
         print('testclumn',testcolumn)
         # Evaluate
-        testing_data = ds[2000:2500]
+        testing_data = ds[m:m+500]
         accurate=0
         for row in testing_data:
             print ("Actual: %s. Predicted: %s" %
-                (row[testcolumnset[i]], print_leaf(classify(row, my_tree))))
-            if list(classify(row,my_tree).keys())[0]==row[testcolumnset[i]] and len(list(classify(row,my_tree).keys()))==1:
+                (row[testcolumn], print_leaf(classify(row, my_tree))))
+            if list(classify(row,my_tree).keys())[0]==row[testcolumn] and len(list(classify(row,my_tree).keys()))==1:
                 accurate=accurate+1
         Accurate.append(accurate/len(testing_data))    
         print('accurate rate is',accurate/len(testing_data))
     print(Accurate)
-    with open('4000.txt', 'w') as f:
+    with open(str(m)+'median'+'txt', 'w') as f:
         for item in Accurate:
             f.write("%s\n" % item)
 
-def accuracyoftree():
-    training_data=ds[0:3000]
+def accuracyoftree(m):
+    training_data=ds[0:m]
     # my_tree = build_tree(training_data)
     my_tree = build_tree(training_data)
     print_tree(my_tree)
 
     # Evaluate
-    testing_data = ds[3000:3500]
+    testing_data = ds[m:m+500]
     accurate=0
     for row in testing_data:
         print ("Actual: %s. Predicted: %s" %
@@ -276,33 +275,8 @@ def testm():
     plt.plot(M, Result)
     plt.show()
 
-def accuracyoftreeall4000(): 
-    training_data=ds[0:4000]
-    testcolumnset=list(range(0,len(header)))
-    Accurate=[]
-    for i in testcolumnset:
-        global testcolumn
-        testcolumn=testcolumnset[i]
-        my_tree = build_tree(training_data)
-        # print_tree(my_tree)
-        print('testclumn',testcolumn)
-        # Evaluate
-        testing_data = ds[4000:4500]
-        accurate=0
-        for row in testing_data:
-            print ("Actual: %s. Predicted: %s" %
-                (row[testcolumnset[i]], print_leaf(classify(row, my_tree))))
-            if list(classify(row,my_tree).keys())[0]==row[testcolumnset[i]] and len(list(classify(row,my_tree).keys()))==1:
-                accurate=accurate+1
-        Accurate.append(accurate/len(testing_data))    
-        print('accurate rate is',accurate/len(testing_data))
-    print(Accurate)
-    with open('4000.txt', 'w') as f:
-        for item in Accurate:
-            f.write("%s\n" % item)
-
-
-accuracyoftreeall()
-accuracyoftreeall4000()
+accuracyoftreeall(2000)
+accuracyoftreeall(3000)
+accuracyoftreeall(4000)
 # accuracyoftree()
 # testm()

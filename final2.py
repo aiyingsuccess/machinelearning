@@ -2,22 +2,46 @@
 from __future__ import print_function
 from pandas import read_csv
 
-import numpy
-dataset = read_csv('/home/aiying/Machinelearning/data1.csv')
-
+import numpy as np
 import pandas as pd
 
 import random
-import numpy as np
 import matplotlib.pyplot as plt
+dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv',low_memory=False)
 
-dataset.fillna('N',inplace=True)
-dataset.to_csv('/home/aiying/Machinelearning/addmean1.csv')
-header = list(dataset)
+headers = list(dataset)
 ds=dataset.values.tolist()              
 
-# testcolumn=header.index('imaginedexplicit1')
-# testcolumn=header.index('expgender')
+modset=[]
+modsetlen=[]
+testcolumnset=[]
+
+for i in range(len(headers)):
+    indexNames = dataset[ dataset[headers[i]] == 'N' ].index
+    if len(indexNames)==0:
+        continue
+    newds=dataset.drop(indexNames)
+    lnewds=newds.values.tolist()
+    modset.append(lnewds)
+    modsetlen.append(len(lnewds))
+    testcolumnset.append(i)
+print('sum of columns have missing data', len(modset))
+print('shortest column',min(modsetlen))
+
+with open('columnsmissingNO.'+'txt', 'w') as f:
+        for item in testcolumnset:
+            f.write("%s," % item )
+with open('columnsmissing.'+'txt', 'w') as f:
+        for item in testcolumnset:
+            f.write("%s\t" % item )
+            f.write("%s\n" % headers[item])
+            
+# with open('columnsmissingdata'+'txt', 'w') as f:
+#         for item in testcolumnset:                
+             
+
+# testcolumn=headers.index('imaginedexplicit1')
+# testcolumn=headers.index('expgender')
 testcolumn=0
 
 def unique_vals(rows, col):
@@ -63,7 +87,7 @@ class Question:
         if is_numeric(self.value):
             condition = ">="
         return "Is %s %s %s?" % (
-            header[self.column], condition, str(self.value))
+            headers[self.column], condition, str(self.value))
 
 def partition(rows, question):
     """Partitions a dataset.
@@ -256,18 +280,27 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
-def accuracyoftreeall():
-    training_data=ds[0:3000]
-    testcolumnset=list(range(0,140))
+def accuracyoftreeall(percent):
     Accurate=[]
-    for i in testcolumnset:
+    M=[]
+    for i in range(len(modset)):
+        if len(modset[i])<3500:
+            per=1
+        else:
+            per=percent
+        m=int(len(modset[i])*0.8*per)
+        n=int(m/4)
+        M.append(m)
+        training_data=modset[i][0:m]
         global testcolumn
         testcolumn=testcolumnset[i]
         my_tree = build_tree(training_data)
         # print_tree(my_tree)
         print('testclumn',testcolumn)
+        print('len of training data',m)
+        print('len of testing data',n)
         # Evaluate
-        testing_data = ds[3000:3500]
+        testing_data = modset[i][m:m+n]
         accurate=0
         for row in testing_data:
             print ("Actual: %s. Predicted: %s" %
@@ -277,15 +310,21 @@ def accuracyoftreeall():
         Accurate.append(accurate/len(testing_data))    
         print('accurate rate is',accurate/len(testing_data))
     print(Accurate)
+    with open(str(percent)+'N'+'txt', 'w') as f:
+        for item in Accurate:
+            f.write("%s\n" % item)
+    with open('different_m_of_column'+'txt', 'w') as f:
+        for item in M:
+            f.write("%s\n" % item)            
 
-def accuracyoftree():
-    training_data=ds[0:4000]
+def accuracyoftree(m):
+    training_data=ds[0:m]
     # my_tree = build_tree(training_data)
     my_tree = build_tree(training_data)
     print_tree(my_tree)
 
     # Evaluate
-    testing_data = ds[4000:4500]
+    testing_data = ds[m:m+500]
     accurate=0
     for row in testing_data:
         print ("Actual: %s. Predicted: %s" %
@@ -319,6 +358,9 @@ def testm():
     plt.plot(M, Result)
     plt.show()
 
-accuracyoftreeall()
+accuracyoftreeall(1)
+accuracyoftreeall(0.8)
+
+
 # accuracyoftree
 # testm()
