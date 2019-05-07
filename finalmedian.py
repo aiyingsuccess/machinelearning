@@ -2,18 +2,18 @@
 from __future__ import print_function
 from pandas import read_csv
 
-import numpy
-dataset = read_csv('/home/aiying/Machinelearning/data1.csv')
+import numpy as np
+dataset = read_csv('/home/aiying/Machinelearning/addmeanorigin.csv')
 
 import pandas as pd
-import numpy as np
+
 
 import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-dataset.fillna(dataset.median(),inplace=True)
-dataset.to_csv('/home/aiying/Machinelearning/addmedian1.csv')
+# dataset.fillna(dataset.median(),inplace=True)
+# dataset.to_csv('/home/aiying/Machinelearning/addmedian1.csv')
 header = list(dataset)
 ds=dataset.values.tolist()              
 
@@ -212,7 +212,7 @@ def print_leaf(counts):
 
 def accuracyoftreeall():
     training_data=ds[0:2000]
-    testcolumnset=list(range(0,140))
+    testcolumnset=list(range(0,len(header)))
     Accurate=[]
     for i in testcolumnset:
         global testcolumn
