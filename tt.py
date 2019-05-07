@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import random
 
 df = pd.DataFrame(np.random.randn(5, 3), index=['a', 'c', 'e', 'f', 'h'],
                  columns=['one', 'two', 'three']) 
@@ -46,5 +47,23 @@ if 2:
    print('a')
 
 
-testcolumn = 1
-print(type(testcolumn))
+
+testc=1
+
+def g():
+   global testc
+   testc=testc+1
+
+g()
+
+print(testc)
+
+# seed the pseudorandom number generator
+from random import seed
+from random import random
+# seed random number generator
+# generate some random numbers
+# reset the seed
+# seed(7)
+# generate some random numbers
+random()
