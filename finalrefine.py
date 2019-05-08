@@ -64,6 +64,7 @@ print('sum of columns have missing data', len(modset))
 print('shortest column',min(modframelen))
 
 testcolumn=0
+colrefine=[0,1,29,30,37,38,41,42,58,59,60,61,62,63,64,65,66,67,71,72,91,92,99,100,101,102,120,121,123,124,125,126,127,128,130,131]
 
 def unique_vals(rows, col):
     """Find the unique values for a column in a dataset."""
@@ -303,17 +304,13 @@ def print_leaf(counts):
 def accuracyoftreeall(percent):
     Accurate=[]
     M=[]
-    for i in range(len(modset)):
-        if len(modset[i])<3500:
-            per=1
-        else:
-            per=percent
-        m=int(len(modset[i])*0.8*per)
+    for i in colrefine:
+        m=int(len(modset[i])*0.8*percent)
         n=int(m/4)
         M.append(m)
         training_data=modset[i][0:m]
         global testcolumn
-        testcolumn=testcolumnset[i]
+        testcolumn=i
         my_tree = build_tree(training_data)
         # print_tree(my_tree)
         print('testclumn',testcolumn)
@@ -330,16 +327,18 @@ def accuracyoftreeall(percent):
         Accurate.append(accurate/len(testing_data))    
         print('accurate rate is',accurate/len(testing_data))
     print(Accurate)
-    with open(str(percent)+'N'+'txt', 'w') as f:
+    with open('refine'+'txt', 'w') as f:
         for item in Accurate:
+            f.write("%s\t" % headers[i])
+            f.write("%s\t" % i)
             f.write("%s\n" % item)
-    with open('different_m_of_column'+'txt', 'w') as f:
+    with open('refinedifferent_m_of_column'+'txt', 'w') as f:
         for item in M:
             f.write("%s\n" % item)            
 
 def accuracyoftree(per):
-        m=int(len(modset[0])*0.8*per)
-        n=int(m/4)
+        m=int(len(modset[0])*5/6*per)
+        n=int(m/5)
         training_data=modset[0][0:m]
         global testcolumn
         testcolumn=testcolumnset[0]
@@ -383,8 +382,8 @@ def testm():
     plt.plot(M, Result)
     plt.show()
 
-accuracyoftree(1)
-accuracyoftree(0.8)
+accuracyoftreeall(1)
+
 
 
 

@@ -1,5 +1,3 @@
-# For Python 2 / 3 compatability
-# For Python 2 / 3 compatability
 from __future__ import print_function
 from pandas import read_csv
 
@@ -38,10 +36,13 @@ print('shortest column',min(modframelen))
 with open('colmissingNO.'+'txt', 'w') as f:
         for item in testcolumnset:
             f.write("%s," % item )
+i=0
 with open('colmissing.'+'txt', 'w') as f:
         for item in testcolumnset:
             f.write("%s\t" % item )
-            f.write("%s\n" % headers[item])
+            f.write("%s\t"%headers[item])
+            f.write("%s\n" % modframelen[i])
+            i=i+1
 with open('numberofcolmissing.'+'txt', 'w') as f:
         for item in modframelen:
             f.write("%s," % item )
@@ -370,7 +371,6 @@ def testm():
 
 accuracyoftreeall(1)
 accuracyoftreeall(0.8)
-
 
 # accuracyoftree
 # testm()

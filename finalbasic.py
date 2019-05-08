@@ -1,5 +1,3 @@
-# For Python 2 / 3 compatability
-# For Python 2 / 3 compatability
 from __future__ import print_function
 from pandas import read_csv
 
@@ -7,7 +5,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from random import randint
+import random
 import matplotlib.pyplot as plt
 dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
 
@@ -38,14 +36,25 @@ print('shortest column',min(modframelen))
 with open('colmissingNO.'+'txt', 'w') as f:
         for item in testcolumnset:
             f.write("%s," % item )
+i=0
 with open('colmissing.'+'txt', 'w') as f:
-    k=0
-    for item in testcolumnset:
-        f.write("%s\t" % item )
-        f.write("%s\t" % headers[item])
-        f.write("%s\n" % modframelen[k])
-        k=k+1
+        for item in testcolumnset:
+            f.write("%s\t" % item )
+            f.write("%s\t"%headers[item])
+            f.write("%s\n" % modframelen[i])
+            i=i+1
+with open('numberofcolmissing.'+'txt', 'w') as f:
+        for item in modframelen:
+            f.write("%s," % item )
 
-for perset in modset:
-    if len(perset)<=6000:
-        randint(0,)
+i=-1
+colrefine=[]
+for item in modframelen:
+    i=i+1
+    if item<4800:
+        colrefine.append(testcolumnset[i])
+with open('colrefine.'+'txt', 'w') as f:
+        for item in colrefine:
+            f.write("%s," % item )    
+    
+
