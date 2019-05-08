@@ -7,7 +7,7 @@ import math
 import numpy as np
 import pandas as pd
 
-import random
+from random import randint
 import matplotlib.pyplot as plt
 dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
 
@@ -45,3 +45,7 @@ with open('colmissing.'+'txt', 'w') as f:
         f.write("%s\t" % headers[item])
         f.write("%s\n" % modframelen[k])
         k=k+1
+
+for perset in modset:
+    if len(perset)<=6000:
+        randint(0,)
