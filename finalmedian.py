@@ -9,8 +9,6 @@ import pandas as pd
 import random
 import matplotlib.pyplot as plt
 dataset = read_csv('/home/aiying/Machinelearning/addmeanorigin.csv')
-# dataset.fillna(dataset.median(),inplace=True)
-# dataset.to_csv('/home/aiying/Machinelearning/addmedian1.csv')
 headers = list(dataset)
 ds=dataset.values.tolist()              
 

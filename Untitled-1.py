@@ -17,26 +17,30 @@ import matplotlib.pyplot as plt
 
 testcolumn=4
 
-dataset.fillna(dataset.median(),inplace=True)
+dataset.fillna('N',inplace=True)
 dataset.median()
 dataset.to_csv('/home/aiying/machinelearning/addmean1.csv')
 ds=dataset.values.tolist()
 
 
 #%%
-ds[0]
+header=list(dataset)
 
 
 #%%
-len(ds)
+header
 
 
 #%%
-len(ds[0])
+ds[3][4]
 
 
 #%%
-ds[0][139]
+header
+
+
+#%%
+header.index('imaginedexplicit1')
 
 
 #%%

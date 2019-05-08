@@ -8,48 +8,29 @@ import pandas as pd
 
 import random
 import matplotlib.pyplot as plt
-dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
+dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv',low_memory=False)
 
 headers = list(dataset)
 ds=dataset.values.tolist()              
 
 modset=[]
-modframe=[]
-modframelen=[]
+modsetlen=[]
 testcolumnset=[]
-colvalues=[]
 
-for i in range(len(headers)):
-    indexNames = dataset[headers[i]].index
+for i in headers:
+    indexNames = math.isnan(dataset[i]).index
     if len(indexNames)==0:
         continue
     newds=dataset.drop(indexNames)
-    lds=newds.values.tolist()
-    modset.append(lds)
-    modframe.append(newds)
-    modframelen.append(len(newds))
+    newds.replace('N', np.NaN,inplace=True)
+    newds.fillna(newds.median(),inplace=True)
+    lnewds=newds.values.tolist()
+    modset.append(lnewds)
+    modsetlen.append(len(lnewds))
     testcolumnset.append(i)
-print('sum of columns have missing data', len(modframe))
-print('shortest column',min(modframelen))
+print('sum of columns have missing data', len(modset))
+print('shortest column',min(modsetlen))
 
-with open('colmissingNO.'+'txt', 'w') as f:
-        for item in testcolumnset:
-            f.write("%s," % item )
-with open('colmissing.'+'txt', 'w') as f:
-        for item in testcolumnset:
-            f.write("%s\t" % item )
-            f.write("%s\n" % headers[item])
-with open('numberofcolmissing.'+'txt', 'w') as f:
-        for item in modframelen:
-            f.write("%s," % item )
-
-for i in headers:            
-    values=list(pd.unique(dataset[i]))    
-    colvalues.append(values)
-
-
-# testcolumn=headers.index('imaginedexplicit1')
-# testcolumn=headers.index('expgender')
 testcolumn=0
 
 def unique_vals(rows, col):
@@ -102,15 +83,13 @@ def partition(rows, question):
     For each row in the dataset, check if it matches the question. If
     so, add it to 'true rows', otherwise, add it to 'false rows'.
     """
-    true_rows, false_rows, N_rows= [],[],[]
+    true_rows, false_rows = [], []
     for row in rows:
-        if question.match(row)==True:
+        if question.match(row):
             true_rows.append(row)
-        elif question.match(row)==2:
-            N_rows.append(row)
         else:
             false_rows.append(row)
-    return true_rows, false_rows, N_rows
+    return true_rows, false_rows
 
 def entropy(rows):
     #Entropy
@@ -144,16 +123,13 @@ def find_best_split(rows):
     for col in range(n_features):  # for each feature
         if col==testcolumn:
             continue
-    
-        
-        # values = set([row[col] for row in rows])  # unique values in the column
+        values = set([row[col] for row in rows])  # unique values in the column
+
         for val in values:  # for each value
-            if math.isnan(val):
-                continue
 
             question = Question(col, val)
 
-            true_rows, false_rows, N_rows = partition(rows, question)
+            true_rows, false_rows = partition(rows, question)
 
             if len(true_rows) == 0 or len(false_rows) == 0:
                 continue
@@ -179,17 +155,15 @@ class Decision_Node:
     """A Decision Node asks a question.
     This holds a reference to the question, and to the two child nodes.
     """
-
     def __init__(self,
                  question,
                  true_branch,
                  false_branch,
-                 N_branch):
+                 ):
         self.question = question
         self.true_branch = true_branch
         self.false_branch = false_branch
-        self.N_branch=N_branch
-
+    
 
 def build_tree(rows):
    
@@ -198,7 +172,7 @@ def build_tree(rows):
     if gain == 0:
         return Leaf(rows)
 
-    true_rows, false_rows, N_rows = partition(rows, question)
+    true_rows, false_rows = partition(rows, question)
 
     # Recursively build the true branch.
     true_branch = build_tree(true_rows)
@@ -206,42 +180,7 @@ def build_tree(rows):
     # Recursively build the false branch.
     false_branch = build_tree(false_rows)
 
-    if len(N_rows)>0:
-        N_branch = build_tree(N_rows)
-    else:
-        if len(true_rows)>=len(false_rows):
-            N_branch=true_branch
-        else:
-            N_branch=false_branch          
-    return Decision_Node(question, true_branch, false_branch, N_branch)
-
-def build_treelimitsize(rows,s):
-   
-    if len(rows)<=s:
-        return Leaf(rows)
-
-    gain, question = find_best_split(rows)
-
-    if gain == 0:
-        return Leaf(rows)
-
-    true_rows, false_rows,N_rows = partition(rows, question)
-
-    # Recursively build the true branch.
-    true_branch = build_treelimitsize(true_rows,s)
-
-    # Recursively build the false branch.
-    false_branch = build_treelimitsize(false_rows,s)
-
-    if len(N_rows)>0:
-        N_branch = build_treelimitsize(N_rows,s)
-    else:
-        if len(true_rows)>=len(false_rows):
-            N_branch=true_branch
-        else:
-            N_branch=false_branch          
-
-    return Decision_Node(question, true_branch, false_branch,N_branch)
+    return Decision_Node(question, true_branch, false_branch)
 
 
 def print_tree(node, spacing=""):
@@ -263,10 +202,6 @@ def print_tree(node, spacing=""):
     print (spacing + '--> False:')
     print_tree(node.false_branch, spacing + "  ")
 
-    print (spacing + '--> Unkown:')
-    print_tree(node.N_branch, spacing + "  ")
-
-
 def classify(row, node):
     """See the 'rules of recursion' above."""
 
@@ -274,10 +209,8 @@ def classify(row, node):
     if isinstance(node, Leaf):
         return node.predictions
 
-    if node.question.match(row)==True:
+    if node.question.match(row):
         return classify(row, node.true_branch)
-    elif node.question.match(row)==2:
-        return classify(row, node.N_branch)
     else:
         return classify(row, node.false_branch)
 
@@ -289,27 +222,20 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
-def accuracyoftreeall(percent):
+def accuracyoftreeall(m):
+    training_data=ds[0:m]
+    testcolumnset=[0,1,5,7,9,14,15,16,17,18,19,20,21,22,23,24,25,27,29,30,31,33,34,36,37,38,40,41,42,44,46,50,52,53,54,55,58,59,60,61,62,63,64,
+    65,66,67,68,69,70,71,72,76,77,78,91,92,93,94,95,96,97,98,99,100,101,102,103,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,
+    132,133,134,135,136,137,138,139,142]
     Accurate=[]
-    M=[]
-    for i in range(len(modset)):
-        if len(modset[i])<3500:
-            per=1
-        else:
-            per=percent
-        m=int(len(modset[i])*0.8*per)
-        n=int(m/4)
-        M.append(m)
-        training_data=modset[i][0:m]
+    for i in testcolumnset:
         global testcolumn
-        testcolumn=testcolumnset[i]
+        testcolumn=i
         my_tree = build_tree(training_data)
         # print_tree(my_tree)
         print('testclumn',testcolumn)
-        print('len of training data',m)
-        print('len of testing data',n)
         # Evaluate
-        testing_data = modset[i][m:m+n]
+        testing_data = ds[m:m+500]
         accurate=0
         for row in testing_data:
             print ("Actual: %s. Predicted: %s" %
@@ -319,21 +245,18 @@ def accuracyoftreeall(percent):
         Accurate.append(accurate/len(testing_data))    
         print('accurate rate is',accurate/len(testing_data))
     print(Accurate)
-    with open(str(percent)+'N'+'txt', 'w') as f:
+    with open(str(m)+'median'+'txt', 'w') as f:
         for item in Accurate:
             f.write("%s\n" % item)
-    with open('different_m_of_column'+'txt', 'w') as f:
-        for item in M:
-            f.write("%s\n" % item)            
 
 def accuracyoftree(m):
-    training_data=ds[0:m]
+    training_data=modset[0][0:m]
     # my_tree = build_tree(training_data)
     my_tree = build_tree(training_data)
     print_tree(my_tree)
 
     # Evaluate
-    testing_data = ds[m:m+500]
+    testing_data = modset[0][m:m+500]
     accurate=0
     for row in testing_data:
         print ("Actual: %s. Predicted: %s" %
@@ -367,9 +290,4 @@ def testm():
     plt.plot(M, Result)
     plt.show()
 
-accuracyoftreeall(1)
-accuracyoftreeall(0.8)
-
-
-# accuracyoftree
-# testm()
+accuracyoftree(2000)

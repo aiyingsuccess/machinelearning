@@ -3,11 +3,12 @@ from __future__ import print_function
 from pandas import read_csv
 from random import random
 
+import math
 import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
-dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv',low_memory=False)
+dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
 
 headers = list(dataset)
 ds=dataset.values.tolist()              
@@ -17,7 +18,7 @@ modsetlen=[]
 testcolumnset=[]
 
 for i in range(len(headers)):
-    indexNames = dataset[ dataset[headers[i]] == 'N' ].index
+    indexNames = dataset[math.isnan(dataset[headers[i]])].index
     if len(indexNames)==0:
         continue
     newds=dataset.drop(indexNames)
