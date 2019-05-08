@@ -8,28 +8,33 @@ import pandas as pd
 
 import random
 import matplotlib.pyplot as plt
-dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv',low_memory=False)
+dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
 
 headers = list(dataset)
 ds=dataset.values.tolist()              
 
 modset=[]
-modsetlen=[]
+modframe=[]
+modframelen=[]
+testcolumnameset=[]
 testcolumnset=[]
-
+j=-1
 for i in headers:
-    indexNames = math.isnan(dataset[i]).index
+    j=j+1
+    indexNames = dataset[i].index[dataset[i].apply(np.isnan)]
     if len(indexNames)==0:
         continue
     newds=dataset.drop(indexNames)
-    newds.replace('N', np.NaN,inplace=True)
     newds.fillna(newds.median(),inplace=True)
+    modframe.append(newds)
     lnewds=newds.values.tolist()
     modset.append(lnewds)
-    modsetlen.append(len(lnewds))
-    testcolumnset.append(i)
+    modframelen.append(len(lnewds))
+    testcolumnameset.append(i)
+    testcolumnset.append(j)
 print('sum of columns have missing data', len(modset))
-print('shortest column',min(modsetlen))
+print('shortest column',min(modframelen))
+
 
 testcolumn=0
 
@@ -123,7 +128,7 @@ def find_best_split(rows):
     for col in range(n_features):  # for each feature
         if col==testcolumn:
             continue
-        values = set([row[col] for row in rows])  # unique values in the column
+        values=list(pd.unique(modframe[testcolumnset.index(testcolumn)][headers[testcolumn]]))  # unique values in the column
 
         for val in values:  # for each value
 
@@ -222,20 +227,27 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
-def accuracyoftreeall(m):
-    training_data=ds[0:m]
-    testcolumnset=[0,1,5,7,9,14,15,16,17,18,19,20,21,22,23,24,25,27,29,30,31,33,34,36,37,38,40,41,42,44,46,50,52,53,54,55,58,59,60,61,62,63,64,
-    65,66,67,68,69,70,71,72,76,77,78,91,92,93,94,95,96,97,98,99,100,101,102,103,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,
-    132,133,134,135,136,137,138,139,142]
+def accuracyoftreeall(percent):
     Accurate=[]
-    for i in testcolumnset:
+    M=[]
+    for i in range(len(modset)):
+        if len(modset[i])<3500:
+            per=1
+        else:
+            per=percent
+        m=int(len(modset[i])*0.8*per)
+        n=int(m/4)
+        M.append(m)
+        training_data=modset[i][0:m]
         global testcolumn
-        testcolumn=i
+        testcolumn=testcolumnset[i]
         my_tree = build_tree(training_data)
         # print_tree(my_tree)
         print('testclumn',testcolumn)
+        print('len of training data',m)
+        print('len of testing data',n)
         # Evaluate
-        testing_data = ds[m:m+500]
+        testing_data = modset[i][m:m+n]
         accurate=0
         for row in testing_data:
             print ("Actual: %s. Predicted: %s" %
@@ -290,4 +302,4 @@ def testm():
     plt.plot(M, Result)
     plt.show()
 
-accuracyoftree(2000)
+accuracyoftreeall(1)

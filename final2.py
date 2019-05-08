@@ -1,4 +1,5 @@
 # For Python 2 / 3 compatability
+# For Python 2 / 3 compatability
 from __future__ import print_function
 from pandas import read_csv
 
@@ -16,20 +17,22 @@ ds=dataset.values.tolist()
 modset=[]
 modframe=[]
 modframelen=[]
+testcolumnameset=[]
 testcolumnset=[]
-colvalues=[]
-
-for i in range(len(headers)):
-    indexNames = dataset[headers[i]].index
+j=-1
+for i in headers:
+    j=j+1
+    indexNames = dataset[i].index[dataset[i].apply(np.isnan)]
     if len(indexNames)==0:
         continue
     newds=dataset.drop(indexNames)
-    lds=newds.values.tolist()
-    modset.append(lds)
     modframe.append(newds)
-    modframelen.append(len(newds))
-    testcolumnset.append(i)
-print('sum of columns have missing data', len(modframe))
+    lnewds=newds.values.tolist()
+    modset.append(lnewds)
+    modframelen.append(len(lnewds))
+    testcolumnameset.append(i)
+    testcolumnset.append(j)
+print('sum of columns have missing data', len(modset))
 print('shortest column',min(modframelen))
 
 with open('colmissingNO.'+'txt', 'w') as f:
@@ -43,9 +46,9 @@ with open('numberofcolmissing.'+'txt', 'w') as f:
         for item in modframelen:
             f.write("%s," % item )
 
-for i in headers:            
-    values=list(pd.unique(dataset[i]))    
-    colvalues.append(values)
+# for i in headers:            
+#     values=list(pd.unique(dataset[i]))    
+#     colvalues.append(values)
 
 
 # testcolumn=headers.index('imaginedexplicit1')
@@ -144,9 +147,7 @@ def find_best_split(rows):
     for col in range(n_features):  # for each feature
         if col==testcolumn:
             continue
-    
-        
-        # values = set([row[col] for row in rows])  # unique values in the column
+        values=list(pd.unique(modframe[testcolumnset.index(testcolumn)][headers[testcolumn]]))  # unique values in the column
         for val in values:  # for each value
             if math.isnan(val):
                 continue
