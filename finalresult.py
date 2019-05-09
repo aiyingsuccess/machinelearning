@@ -359,7 +359,7 @@ def accuracyoftreeall():
             # if index==0:
             #     print(replace)
             index=index+1
-            pd.DataFrame(replace).to_csv(str(testcolumn)+".csv")
+            pd.DataFrame(replace).to_csv(str(testcolumn)+".csv",index=False)
             # Replace.append(replace)
             for item in replace:
                 g.write("%s," % item)
