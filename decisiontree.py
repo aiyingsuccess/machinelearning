@@ -386,9 +386,11 @@ def print_leaf(counts):
 if __name__ == '__main__':
 
     my_tree = build_tree(training_data)
+    # Tree=[]
+    # Tree.append(my_tree)
 
-    print_tree(my_tree)
-
+    # print_tree(Tree[0])
+  
     # Evaluate
     testing_data = [
         ['Green', 3, 'Apple'],

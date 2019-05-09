@@ -10,8 +10,27 @@ from random import randint
 import matplotlib.pyplot as plt
 dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
 
-headers = list(dataset)
-ds=dataset.values.tolist()              
+headers=list(dataset)
+ds=dataset.values.tolist()  
+nset=[]
+testcolumnameset=[]
+testcolumnset=[]
+omodset=[]
+
+j=-1
+for i in headers:
+    j=j+1
+    indexNames = dataset[i].index[dataset[i].apply(np.isnan)]
+    if len(indexNames)==0:
+         continue
+    perset=[]   
+    for i in list(indexNames):
+        perset.append(ds[i])
+    nset.append(perset)   
+    newds=dataset.drop(indexNames)
+    omodset.append(newds.values.tolist())
+    testcolumnameset.append(i)
+    testcolumnset.append(j)
 
 limit=int(144/5)
 validrow=[]
@@ -45,11 +64,9 @@ ds=validdataset.values.tolist()
 modset=[]
 modframe=[]
 modframelen=[]
-testcolumnameset=[]
-testcolumnset=[]
-j=-1
+
+
 for i in headers:
-     j=j+1
      indexNames = validdataset[i].index[validdataset[i].apply(np.isnan)]
      if len(indexNames)==0:
          continue
@@ -58,17 +75,12 @@ for i in headers:
      lnewds=newds.values.tolist()
      modset.append(lnewds)
      modframelen.append(len(lnewds))
-     testcolumnameset.append(i)
-     testcolumnset.append(j)
+
 print('sum of columns have missing data', len(modset))
 print('shortest column',min(modframelen))
 
 testcolumn=0
 colrefine=[0,1,29,30,37,38,41,42,58,59,60,61,62,63,64,65,66,67,71,72,91,92,99,100,101,102,120,121,123,124,125,126,127,128,130,131]
-
-def unique_vals(rows, col):
-    """Find the unique values for a column in a dataset."""
-    return set([row[col] for row in rows])
 
 def class_counts(rows):
     """Counts the number of each type of example in a dataset."""  
@@ -301,10 +313,12 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
+Tree=[]
 def accuracyoftreeall(percent):
     Accurate=[]
-    M=[]
-    for i in colrefine:
+    M=[] 
+    n=0
+    for i in testcolumnset:
         m=int(len(modset[i])*0.8*percent)
         n=int(m/4)
         M.append(m)
@@ -312,6 +326,7 @@ def accuracyoftreeall(percent):
         global testcolumn
         testcolumn=i
         my_tree = build_tree(training_data)
+        Tree.append(my_tree)
         # print_tree(my_tree)
         print('testclumn',testcolumn)
         print('len of training data',m)
@@ -320,21 +335,28 @@ def accuracyoftreeall(percent):
         testing_data = modset[i][m:m+n]
         accurate=0
         for row in testing_data:
+            leaf=classify(row, my_tree)
             print ("Actual: %s. Predicted: %s" %
-                (row[testcolumn], print_leaf(classify(row, my_tree))))
-            if list(classify(row,my_tree).keys())[0]==row[testcolumn] and len(list(classify(row,my_tree).keys()))==1:
+                (row[testcolumn], print_leaf(leaf)))
+            if list(leaf.keys())[0]==row[testcolumn] and len(list(leaf.keys()))==1:
                 accurate=accurate+1
         Accurate.append(accurate/len(testing_data))    
         print('accurate rate is',accurate/len(testing_data))
+
+        solvedata=nset[n]  
+        for row in solvedata:
+            solvedata[testcolumn]=list(classify(row, my_tree).keys())[0]
+        print(nset[n])
+        n=n+1
     print(Accurate)
-    with open('refine'+'txt', 'w') as f:
+    with open('result'+'txt', 'w') as f:
         for item in Accurate:
             f.write("%s\t" % headers[i])
             f.write("%s\t" % i)
             f.write("%s\n" % item)
-    with open('refinedifferent_m_of_column'+'txt', 'w') as f:
+    with open('resultdifferent_m_of_column'+'txt', 'w') as f:
         for item in M:
-            f.write("%s\n" % item)            
+            f.write("%s\n" % item)    
 
 def accuracyoftree(per):
         m=int(len(modset[0])*5/6*per)
@@ -358,7 +380,3 @@ def accuracyoftree(per):
         print('accurate rate is',accurate/len(testing_data))
 
 accuracyoftreeall(1)
-
-
-
-
