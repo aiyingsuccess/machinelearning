@@ -313,7 +313,7 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
-Tree=[]
+# Tree=[]
 def accuracyoftreeall(percent):
     Accurate=[]
     M=[] 
@@ -326,7 +326,7 @@ def accuracyoftreeall(percent):
         global testcolumn
         testcolumn=i
         my_tree = build_tree(training_data)
-        Tree.append(my_tree)
+        # Tree.append(my_tree)
         # print_tree(my_tree)
         print('testclumn',testcolumn)
         print('len of training data',m)
