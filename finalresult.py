@@ -8,7 +8,7 @@ import pandas as pd
 
 from random import randint
 import matplotlib.pyplot as plt
-dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
+dataset = read_csv('/home/aiying/Projects/Machinelearning/dataorigin.csv')
 
 headers=list(dataset)
 ds=dataset.values.tolist()  
@@ -76,7 +76,7 @@ for i in headers:
      modset.append(lnewds)
      modframelen.append(len(lnewds))
 
-print('sum of columns have missing data', len(modset))
+print('modframelen', modframelen)
 print('shortest column',min(modframelen))
 
 testcolumn=0
@@ -317,7 +317,7 @@ Tree=[]
 def accuracyoftreeall(percent):
     Accurate=[]
     M=[] 
-    n=0
+    index=0
     for i in testcolumnset:
         m=int(len(modset[i])*0.8*percent)
         n=int(m/4)
@@ -343,11 +343,13 @@ def accuracyoftreeall(percent):
         Accurate.append(accurate/len(testing_data))    
         print('accurate rate is',accurate/len(testing_data))
 
-        solvedata=nset[n]  
-        for row in solvedata:
-            solvedata[testcolumn]=list(classify(row, my_tree).keys())[0]
-        print(nset[n])
-        n=n+1
+      
+        for row in nset[index]:
+            row[testcolumn]=list(classify(row, my_tree).keys())[0]
+        if index==0:
+            print(nset[index])
+            print(len(nset[index]))
+        index=index+1
     print(Accurate)
     with open('result'+'txt', 'w') as f:
         for item in Accurate:
