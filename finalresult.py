@@ -8,7 +8,7 @@ import pandas as pd
 
 from random import randint
 import matplotlib.pyplot as plt
-dataset = read_csv('/home/aiying/Projects/Machinelearning/dataorigin.csv')
+dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
 
 headers=list(dataset)
 ds=dataset.values.tolist()  
@@ -314,51 +314,61 @@ def print_leaf(counts):
     return probs
 
 # Tree=[]
-def accuracyoftreeall(percent):
-    Accurate=[]
-    M=[] 
-    index=0
-    for i in testcolumnset:
-        m=int(len(modset[i])*0.8*percent)
-        n=int(m/4)
-        M.append(m)
-        training_data=modset[i][0:m]
-        global testcolumn
-        testcolumn=i
-        my_tree = build_tree(training_data)
-        # Tree.append(my_tree)
-        # print_tree(my_tree)
-        print('testclumn',testcolumn)
-        print('len of training data',m)
-        print('len of testing data',n)
-        # Evaluate
-        testing_data = modset[i][m:m+n]
-        accurate=0
-        for row in testing_data:
-            leaf=classify(row, my_tree)
-            print ("Actual: %s. Predicted: %s" %
-                (row[testcolumn], print_leaf(leaf)))
-            if list(leaf.keys())[0]==row[testcolumn] and len(list(leaf.keys()))==1:
-                accurate=accurate+1
-        Accurate.append(accurate/len(testing_data))    
-        print('accurate rate is',accurate/len(testing_data))
+def accuracyoftreeall():
+    with open('resultreplace'+'.txt','w') as g:
+        with open('resultaccurate'+'txt', 'w') as f:     
+            Accurate=[]
+            M=[] 
+            Replace=[]
+            index=0
+            for i in testcolumnset:
+                l=len(modset[i])
+                m=int(l/10*9)
+                if m>5500:
+                    m=5500
+                n=min(200,l-m)
+                M.append(m)
+                training_data=modset[i][0:m]
+                global testcolumn
+                testcolumn=i
+                my_tree = build_tree(training_data)
+                # Tree.append(my_tree)
+                # print_tree(my_tree)
+                print('testclumn',testcolumn)
+                print('len of training data',m)
+                print('len of testing data',n)
+                # Evaluate
+                testing_data = modset[i][m:m+n]
+                accurate=0
+                for row in testing_data:
+                    leaf=classify(row, my_tree)
+                    print ("Actual: %s. Predicted: %s" %
+                        (row[testcolumn], print_leaf(leaf)))
+                    if list(leaf.keys())[0]==row[testcolumn] and len(list(leaf.keys()))==1:
+                        accurate=accurate+1
+                percent=accurate/len(testing_data)
+                Accurate.append(percent)
+                f.write("%s\t" % i)
+                f.write("%s\t" % l)
+                f.write("%s\n" % percent)    
+                print('accurate rate is',accurate/len(testing_data))
 
-      
-        for row in nset[index]:
-            row[testcolumn]=list(classify(row, my_tree).keys())[0]
-        if index==0:
-            print(nset[index])
-            print(len(nset[index]))
-        index=index+1
-    print(Accurate)
-    with open('result'+'txt', 'w') as f:
-        for item in Accurate:
-            f.write("%s\t" % headers[i])
-            f.write("%s\t" % i)
-            f.write("%s\n" % item)
-    with open('resultdifferent_m_of_column'+'txt', 'w') as f:
-        for item in M:
-            f.write("%s\n" % item)    
+                replace=[]
+                for row in nset[index]:
+                    row[testcolumn]=list(classify(row, my_tree).keys())[0]
+                    replace.append(row[testcolumn])
+                # if index==0:
+                #     print(replace)
+                index=index+1
+                Replace.append(replace)
+                for item in replace:
+                    g.write("%s," % item)
+                g.write("\n")
+            print('Accurate',Accurate)
+            print('Replacedata',Replace)
+            print('M',M)
+        
+                          
 
 def accuracyoftree(per):
         m=int(len(modset[0])*5/6*per)
@@ -381,4 +391,5 @@ def accuracyoftree(per):
                 accurate=accurate+1
         print('accurate rate is',accurate/len(testing_data))
 
-accuracyoftreeall(1)
+
+accuracyoftreeall()
