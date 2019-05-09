@@ -315,58 +315,58 @@ def print_leaf(counts):
 
 # Tree=[]
 def accuracyoftreeall():
-    with open('resultreplace'+'.txt','w') as g:
-        with open('resultaccurate'+'txt', 'w') as f:     
-            Accurate=[]
-            M=[] 
-            Replace=[]
-            index=0
-            for i in testcolumnset:
-                l=len(modset[i])
-                m=int(l/10*9)
-                if m>5500:
-                    m=5500
-                n=min(200,l-m)
-                M.append(m)
-                training_data=modset[i][0:m]
-                global testcolumn
-                testcolumn=i
-                my_tree = build_tree(training_data)
-                # Tree.append(my_tree)
-                # print_tree(my_tree)
-                print('testclumn',testcolumn)
-                print('len of training data',m)
-                print('len of testing data',n)
-                # Evaluate
-                testing_data = modset[i][m:m+n]
-                accurate=0
-                for row in testing_data:
-                    leaf=classify(row, my_tree)
-                    print ("Actual: %s. Predicted: %s" %
-                        (row[testcolumn], print_leaf(leaf)))
-                    if list(leaf.keys())[0]==row[testcolumn] and len(list(leaf.keys()))==1:
-                        accurate=accurate+1
-                percent=accurate/len(testing_data)
-                Accurate.append(percent)
-                f.write("%s\t" % i)
-                f.write("%s\t" % l)
-                f.write("%s\n" % percent)    
-                print('accurate rate is',accurate/len(testing_data))
+    with open('resultreplace'+'.txt','w') as g:   
+        Accurate=[]
+        M=[] 
+        Replace=[]
+        index=0
+        for i in testcolumnset:
+            l=len(modset[i])
+            m=int(l/10*9)
+            if m>5500:
+                m=5500
+            n=min(200,l-m)
+            M.append(m)
+            training_data=modset[i][0:m]
+            global testcolumn
+            testcolumn=i
+            my_tree = build_tree(training_data)
+            # Tree.append(my_tree)
+            # print_tree(my_tree)
+            print('testclumn',testcolumn)
+            print('len of training data',m)
+            print('len of testing data',n)
+            # Evaluate
+            testing_data = modset[i][m:m+n]
+            accurate=0
+            for row in testing_data:
+                leaf=classify(row, my_tree)
+                print ("Actual: %s. Predicted: %s" %
+                    (row[testcolumn], print_leaf(leaf)))
+                if list(leaf.keys())[0]==row[testcolumn] and len(list(leaf.keys()))==1:
+                    accurate=accurate+1
+            percent=accurate/len(testing_data)
+            Accurate.append(percent)
+            g.write("%s\t" % i)
+            g.write("%s\t" % l)
+            g.write("%s\n" % percent)    
+            print('accurate rate is',accurate/len(testing_data))
 
-                replace=[]
-                for row in nset[index]:
-                    row[testcolumn]=list(classify(row, my_tree).keys())[0]
-                    replace.append(row[testcolumn])
-                # if index==0:
-                #     print(replace)
-                index=index+1
-                Replace.append(replace)
-                for item in replace:
-                    g.write("%s," % item)
-                g.write("\n")
-            print('Accurate',Accurate)
-            print('Replacedata',Replace)
-            print('M',M)
+            replace=[]
+            for row in nset[index]:
+                row[testcolumn]=list(classify(row, my_tree).keys())[0]
+                replace.append(row[testcolumn])
+            # if index==0:
+            #     print(replace)
+            index=index+1
+            pd.DataFrame(replace).to_csv(str(testcolumn)+".csv")
+            # Replace.append(replace)
+            for item in replace:
+                g.write("%s," % item)
+            g.write("\n")
+        print('Accurate',Accurate)
+        print('Replacedata',Replace)
+        print('M',M)
         
                           
 
