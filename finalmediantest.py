@@ -5,6 +5,7 @@ from pandas import read_csv
 import math
 import numpy as np
 import pandas as pd
+import multiprocessing
 
 import random
 import matplotlib.pyplot as plt
@@ -261,45 +262,20 @@ def accuracyoftreeall(percent):
         for item in Accurate:
             f.write("%s\n" % item)
 
-def accuracyoftree(m):
-    training_data=modset[0][0:m]
+def accuracyoftree(i):
     # my_tree = build_tree(training_data)
-    my_tree = build_tree(training_data)
+    my_tree = build_tree(modset[i])
     print_tree(my_tree)
+    print(i)
+    # # Evaluate
+    # testing_data = modset[i][2000:2300]
+    # accurate=0
+    # for row in testing_data:
+    #     print ("Actual: %s. Predicted: %s" %
+    #            (row[testcolumn], print_leaf(classify(row, my_tree))))
+    #     if list(classify(row,my_tree).keys())[0]==row[testcolumn] and len(list(classify(row,my_tree).keys()))==1:
+    #         accurate=accurate+1
+    # print('accurate rate is',accurate/len(testing_data))
 
-    # Evaluate
-    testing_data = modset[0][m:m+500]
-    accurate=0
-    for row in testing_data:
-        print ("Actual: %s. Predicted: %s" %
-               (row[testcolumn], print_leaf(classify(row, my_tree))))
-        if list(classify(row,my_tree).keys())[0]==row[testcolumn] and len(list(classify(row,my_tree).keys()))==1:
-            accurate=accurate+1
-    print('accurate rate is',accurate/len(testing_data))
-
-def testm():
-    Result=[]
-    M=[]
-    for m in range(30,200,10):
-        M.append(m)
-        average=0.0
-        for repeat in range(50):                         #need to be set correctly to get the average value
-            training_data=ds[0:50]
-            my_tree = build_tree(training_data)
-
-            # Evaluate
-            testing_data = ds[51:71]
-            accurate=0
-            for row in testing_data:
-                if list(classify(row,my_tree).keys())[0]==row[testcolumn]:
-                    accurate=accurate+1
-            average=average+accurate/len(testing_data)
-            # print(accurate/len(testing_data))
-        # print("average error rate",average/(repeat+1))
-        Result.append(1-average/(repeat+1))
-    print(Result)
-    print(M)
-    plt.plot(M, Result)
-    plt.show()
-
-accuracyoftreeall(1)
+pool=multiprocessing.Pool()
+pool.map(accuracyoftree,testcolumnset)
