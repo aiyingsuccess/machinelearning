@@ -9,7 +9,7 @@ import pandas as pd
 
 from random import randint
 import matplotlib.pyplot as plt
-dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
+dataset = read_csv('~/machinelearning/dataorigin.csv')
 
 headers=list(dataset)
 ds=dataset.values.tolist()
@@ -383,8 +383,8 @@ def accuracyoftree(per):
 Accurate=[]
 M=[]
 
-pool=multiprocessing.Pool(processes=100)
-pool.map(accuracyoftreeall,testcolumnset[0:10])
+pool=multiprocessing.Pool(processes=8)
+pool.map(accuracyoftreeall,testcolumnset[40:45])
 
 pd.DataFrame(Accurate).to_csv("Accurate.csv",index=False)
 pd.DataFrame(M).to_csv("M.csv",index=False)
