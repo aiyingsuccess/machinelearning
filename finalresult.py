@@ -2,7 +2,7 @@ from __future__ import print_function
 from pandas import read_csv
 
 import multiprocessing
-import random 
+import random
 import math
 import numpy as np
 import pandas as pd
@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
 
 headers=list(dataset)
-ds=dataset.values.tolist()  
+ds=dataset.values.tolist()
 nset=[]
 testcolumnameset=[]
 testcolumnset=[]
@@ -24,10 +24,10 @@ for i in headers:
     indexNames = dataset[i].index[dataset[i].apply(np.isnan)]
     if len(indexNames)==0:
          continue
-    perset=[]   
+    perset=[]
     for i in list(indexNames):
         perset.append(ds[i])
-    nset.append(perset)   
+    nset.append(perset)
     newds=dataset.drop(indexNames)
     # omodset.append(newds.values.tolist())
     testcolumnameset.append(i)
@@ -38,30 +38,30 @@ validrow=[]
 rowsum=list(dataset.isnull().sum(axis=1))
 for i in range(len(rowsum)):
     if rowsum[i]<limit:
-        validrow.append(i)    
+        validrow.append(i)
 
 validds=[]
 for i in validrow:
-    validds.append(ds[i])    
+    validds.append(ds[i])
 
 
 order=[]
 for i in range(41):
-    order=order+random.sample(range(0,144), 144)    
+    order=order+random.sample(range(0,144), 144)
 
     n=0
 for row in validds[0:len(validds)]:
     while math.isnan(row[order[n]]):
         order[n]=(order[n]+1)%144
-    row[order[n]]=np.NaN  
+    row[order[n]]=np.NaN
     validds.append(row)
     n=n+1
 
 validdataset=pd.DataFrame(validds)
 
 headers = list(validdataset)
-ds=validdataset.values.tolist()              
- 
+ds=validdataset.values.tolist()
+
 modset=[]
 modframe=[]
 modframelen=[]
@@ -84,7 +84,7 @@ testcolumn=0
 colrefine=[0,1,29,30,37,38,41,42,58,59,60,61,62,63,64,65,66,67,71,72,91,92,99,100,101,102,120,121,123,124,125,126,127,128,130,131]
 
 def class_counts(rows):
-    """Counts the number of each type of example in a dataset."""  
+    """Counts the number of each type of example in a dataset."""
     counts = {}  # a dictionary of label -> count.
     for row in rows:
         # in our dataset format, the label is always the last column
@@ -110,7 +110,7 @@ class Question:
         self.column = column
         self.value = value
 
-    def match(self, example):    
+    def match(self, example):
         val = example[self.column]
         if is_numeric(val):
             return val >= self.value
@@ -217,7 +217,7 @@ class Decision_Node:
 
 
 def build_tree(rows):
-   
+
     gain, question = find_best_split(rows)
 
     if gain == 0:
@@ -237,11 +237,11 @@ def build_tree(rows):
         if len(true_rows)>=len(false_rows):
             N_branch=true_branch
         else:
-            N_branch=false_branch          
+            N_branch=false_branch
     return Decision_Node(question, true_branch, false_branch, N_branch)
 
 def build_treelimitsize(rows,s):
-   
+
     if len(rows)<=s:
         return Leaf(rows)
 
@@ -264,7 +264,7 @@ def build_treelimitsize(rows,s):
         if len(true_rows)>=len(false_rows):
             N_branch=true_branch
         else:
-            N_branch=false_branch          
+            N_branch=false_branch
 
     return Decision_Node(question, true_branch, false_branch,N_branch)
 
@@ -342,7 +342,7 @@ def accuracyoftreeall(i):
                 accurate=accurate+1
         percent=accurate/len(testing_data)
         Accurate.append(percent)
-            
+
         print('accurate rate is',accurate/len(testing_data))
 
         replace=[]
@@ -351,12 +351,14 @@ def accuracyoftreeall(i):
             replace.append(row[testcolumn])
         # if index==0:
         #     print(replace)
+        acc=[percent,m]
+        pd.DataFrame(acc).to_csv("acc"+str(testcolumn)+".csv",index=False)
         pd.DataFrame(replace).to_csv(str(testcolumn)+".csv",index=False)
         # Replace.append(replace)
-        
-        
-        
-                          
+
+
+
+
 
 def accuracyoftree(per):
         m=int(len(modset[0])*5/6*per)
@@ -381,10 +383,8 @@ def accuracyoftree(per):
 
 
 Accurate=[]
-M=[] 
+M=[]
 
-pool=multiprocessing.Pool()
-pool.map(accuracyoftreeall,testcolumnset[0:55])
-
-print(Accurate)
+pool=multiprocessing.Pool(processes=20)
+pool.map(accuracyoftreeall,testcolumnset[10:20])
 
