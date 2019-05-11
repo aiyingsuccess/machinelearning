@@ -17,6 +17,9 @@ modframe=[]
 modframelen=[]
 testcolumnameset=[]
 testcolumnset=[]
+colvalues=[]
+
+
 j=-1
 for i in headers:
     j=j+1
@@ -30,31 +33,35 @@ for i in headers:
     modframelen.append(len(lnewds))
     testcolumnameset.append(i)
     testcolumnset.append(j)
+    values=pd.unique(dataset[i])
+    colvalues.append(values)
+
 print('sum of columns have missing data', len(modset))
 print('shortest column',min(modframelen))
 
-with open('colmissingNO.'+'txt', 'w') as f:
-        for item in testcolumnset:
-            f.write("%s," % item )
+
+
 i=0
 with open('colmissing.'+'txt', 'w') as f:
         for item in testcolumnset:
             f.write("%s\t" % item )
             f.write("%s\t"%headers[item])
-            f.write("%s\n" % modframelen[i])
+            f.write("%s\t" % modframelen[i])
+            f.write("%s\n"%len(colvalues[i]))
             i=i+1
 with open('numberofcolmissing.'+'txt', 'w') as f:
         for item in modframelen:
             f.write("%s," % item )
 
-i=-1
-colrefine=[]
-for item in modframelen:
-    i=i+1
-    if item<4800:
-        colrefine.append(testcolumnset[i])
-with open('colrefine.'+'txt', 'w') as f:
-        for item in colrefine:
-            f.write("%s," % item )    
+
+# i=-1
+# colrefine=[]
+# for item in modframelen:
+#     i=i+1
+#     if item<4800:
+#         colrefine.append(testcolumnset[i])
+# with open('colrefine.'+'txt', 'w') as f:
+#         for item in colrefine:
+#             f.write("%s," % item )    
     
 

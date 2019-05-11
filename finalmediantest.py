@@ -1,43 +1,85 @@
-# For Python 2 / 3 compatability
 from __future__ import print_function
 from pandas import read_csv
 
+import multiprocessing
+import random
 import math
 import numpy as np
 import pandas as pd
-import multiprocessing
 
-import random
+from random import randint
 import matplotlib.pyplot as plt
 dataset = read_csv('/home/aiying/Machinelearning/dataorigin.csv')
 
-headers = list(dataset)
-ds=dataset.values.tolist()              
-
-modset=[]
-modframe=[]
-modframelen=[]
+headers=list(dataset)
+ds=dataset.values.tolist()
+nset=[]
 testcolumnameset=[]
 testcolumnset=[]
+# omodset=[]
+
 j=-1
 for i in headers:
     j=j+1
     indexNames = dataset[i].index[dataset[i].apply(np.isnan)]
     if len(indexNames)==0:
-        continue
+         continue
+    perset=[]
+    for i in list(indexNames):
+        perset.append(ds[i])
+    nset.append(perset)
     newds=dataset.drop(indexNames)
-    newds.fillna(newds.median(),inplace=True)
-    modframe.append(newds)
-    lnewds=newds.values.tolist()
-    modset.append(lnewds)
-    modframelen.append(len(lnewds))
+    # omodset.append(newds.values.tolist())
     testcolumnameset.append(i)
     testcolumnset.append(j)
-print('sum of columns have missing data', len(modset))
+
+limit=int(144/5)
+validrow=[]
+rowsum=list(dataset.isnull().sum(axis=1))
+for i in range(len(rowsum)):
+    if rowsum[i]<limit:
+        validrow.append(i)
+
+validds=[]
+for i in validrow:
+    validds.append(ds[i])
+
+
+order=[]
+for i in range(41):
+    order=order+random.sample(range(0,144), 144)
+
+    n=0
+for row in validds[0:len(validds)]:
+    while math.isnan(row[order[n]]):
+        order[n]=(order[n]+1)%144
+    row[order[n]]=np.NaN
+    validds.append(row)
+    n=n+1
+
+validdataset=pd.DataFrame(validds)
+
+headers = list(validdataset)
+ds=validdataset.values.tolist()
+
+modset=[]
+modframe=[]
+modframelen=[]
+
+
+for i in headers:
+     indexNames = validdataset[i].index[validdataset[i].apply(np.isnan)]
+     if len(indexNames)==0:
+         continue
+     newds=validdataset.drop(indexNames)
+     newds.fillna(newds.median())
+     modframe.append(newds)
+     lnewds=newds.values.tolist()
+     modset.append(lnewds)
+     modframelen.append(len(lnewds))
+
+print('modframelen', modframelen)
 print('shortest column',min(modframelen))
-
-
-testcolumn=0
 
 def unique_vals(rows, col):
     """Find the unique values for a column in a dataset."""
@@ -228,21 +270,18 @@ def print_leaf(counts):
         probs[lbl] = str(int(counts[lbl] / total * 100)) + "%"
     return probs
 
-def accuracyoftreeall(percent):
-    Accurate=[]
-    M=[]
-    for i in range(len(modset)):
-        if len(modset[i])<3500:
-            per=1
-        else:
-            per=percent
-        m=int(len(modset[i])*0.8*per)
-        n=int(m/4)
+def accuracyoftreeall(i):
+        l=len(modset[i])
+        m=int(l/10*9)
+        if m>5500:
+            m=5500
+        n=min(200,l-m)
         M.append(m)
         training_data=modset[i][0:m]
         global testcolumn
-        testcolumn=testcolumnset[i]
+        testcolumn=i
         my_tree = build_tree(training_data)
+        # Tree.append(my_tree)
         # print_tree(my_tree)
         print('testclumn',testcolumn)
         print('len of training data',m)
@@ -251,31 +290,52 @@ def accuracyoftreeall(percent):
         testing_data = modset[i][m:m+n]
         accurate=0
         for row in testing_data:
+            leaf=classify(row, my_tree)
+            print ("Actual: %s. Predicted: %s" %
+                (row[testcolumn], print_leaf(leaf)))
+            if list(leaf.keys())[0]==row[testcolumn] and len(list(leaf.keys()))==1:
+                accurate=accurate+1
+        percent=accurate/len(testing_data)
+        Accurate.append(percent)
+
+        print('accurate rate is',accurate/len(testing_data))
+
+        replace=[]
+        for row in nset[testcolumnset.index(i)]:
+            row[testcolumn]=list(classify(row, my_tree).keys())[0]
+            replace.append(row[testcolumn])
+        # if index==0:
+        #     print(replace)
+        acc=[percent,m]
+        pd.DataFrame(acc).to_csv("acc"+str(testcolumn)+".csv",index=False)
+        pd.DataFrame(replace).to_csv(str(testcolumn)+".csv",index=False)
+        # Replace.append(replace)
+
+def accuracyoftree(per):
+        m=int(len(modset[0])*5/6*per)
+        n=int(m/5)
+        training_data=modset[0][0:m]
+        global testcolumn
+        testcolumn=testcolumnset[0]
+        my_tree = build_tree(training_data)
+        # print_tree(my_tree)
+        print('testclumn',testcolumn)
+        print('len of training data',m)
+        print('len of testing data',n)
+        # Evaluate
+        testing_data = modset[0][m:m+n]
+        accurate=0
+        for row in testing_data:
             print ("Actual: %s. Predicted: %s" %
                 (row[testcolumn], print_leaf(classify(row, my_tree))))
             if list(classify(row,my_tree).keys())[0]==row[testcolumn] and len(list(classify(row,my_tree).keys()))==1:
                 accurate=accurate+1
-        Accurate.append(accurate/len(testing_data))    
         print('accurate rate is',accurate/len(testing_data))
-    print(Accurate)
-    with open(str(m)+'median'+'txt', 'w') as f:
-        for item in Accurate:
-            f.write("%s\n" % item)
 
-def accuracyoftree(i):
-    # my_tree = build_tree(training_data)
-    my_tree = build_tree(modset[i])
-    print_tree(my_tree)
-    print(i)
-    # # Evaluate
-    # testing_data = modset[i][2000:2300]
-    # accurate=0
-    # for row in testing_data:
-    #     print ("Actual: %s. Predicted: %s" %
-    #            (row[testcolumn], print_leaf(classify(row, my_tree))))
-    #     if list(classify(row,my_tree).keys())[0]==row[testcolumn] and len(list(classify(row,my_tree).keys()))==1:
-    #         accurate=accurate+1
-    # print('accurate rate is',accurate/len(testing_data))
 
-pool=multiprocessing.Pool()
-pool.map(accuracyoftree,testcolumnset)
+Accurate=[]
+M=[]
+
+pool=multiprocessing.Pool(processes=1)
+pool.map(accuracyoftreeall,testcolumnset[98:99])
+

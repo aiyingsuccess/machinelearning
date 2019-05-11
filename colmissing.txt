@@ -1,92 +1,92 @@
-0	expgender	2941
-1	exprace	2945
-5	age	6328
-7	sunkDV	6330
-9	gainlossDV	6271
-14	anchoring1	5362
-15	anchoring2	5284
-16	anchoring3	5627
-17	anchoring4	5609
-18	Ranchori	5362
-19	RAN001	5284
-20	RAN002	5627
-21	RAN003	5609
-22	Ranch1	5362
-23	Ranch2	5284
-24	Ranch3	5627
-25	Ranch4	5609
-27	gambfalDV	5942
-29	scalesreca	3079
-30	scalesrecb	2820
-31	scales	5899
-33	reciprocityother	6270
-34	reciprocityus	6276
-36	allowedforbidden	6292
-37	quotearec	3242
-38	quotebrec	3083
-40	quote	6325
-41	totalflagestimations	3106
-42	totalnoflagtimeestimations	3146
-44	flagdv	6341
-46	Sysjust	6333
-50	Imagineddv	6336
-52	partgender	5931
-53	IATexpart	6339
-54	IATexpmath	6341
-55	IATexp.overall	6341
-58	allowedforbiddena	3170
-59	allowedforbiddenb	3122
-60	anchoring1a	2600
-61	anchoring1b	2762
-62	anchoring2a	2586
-63	anchoring2b	2698
-64	anchoring3a	2863
-65	anchoring3b	2764
-66	anchoring4a	2676
-67	anchoring4b	2933
-68	artwarm	6343
-69	citizenship	6328
-70	d_donotuse	5890
-71	diseaseframinga	3174
-72	diseaseframingb	3097
-76	flagsupplement1	6320
-77	flagsupplement2	6308
-78	flagsupplement3	6308
-91	gamblerfallacya	2977
-92	gamblerfallacyb	2965
-93	imaginedexplicit1	6323
-94	imaginedexplicit2	6333
-95	imaginedexplicit3	6323
-96	imaginedexplicit4	6330
-97	major	5117
-98	mathwarm	6343
-99	moneyagea	3236
-100	moneyageb	3059
-101	moneygendera	3241
-102	moneygenderb	3053
-103	nativelang	6316
-116	omdimc3	6343
-117	omdimc3rt	6343
-118	omdimc3trt	6343
-119	politicalid	6192
-120	quotea	3242
-121	quoteb	3083
-122	race	6011
-123	reciprocityothera	3196
-124	reciprocityotherb	3074
-125	reciprocityusa	3202
-126	reciprocityusb	3074
-127	scalesa	3079
-128	scalesb	2820
-129	sex	6333
-130	sunkcosta	3243
-131	sunkcostb	3087
-132	sysjust1	6321
-133	sysjust2	6317
-134	sysjust3	6308
-135	sysjust4	6316
-136	sysjust5	6314
-137	sysjust6	6315
-138	sysjust7	6322
-139	sysjust8	6327
-142	order	6300
+0	expgender	2941	3
+1	exprace	2945	16
+5	age	6328	71
+7	sunkDV	6330	10
+9	gainlossDV	6271	3
+14	anchoring1	5362	455
+15	anchoring2	5284	465
+16	anchoring3	5627	766
+17	anchoring4	5609	387
+18	Ranchori	5362	455
+19	RAN001	5284	465
+20	RAN002	5627	766
+21	RAN003	5609	387
+22	Ranch1	5362	455
+23	Ranch2	5284	465
+24	Ranch3	5627	766
+25	Ranch4	5609	387
+27	gambfalDV	5942	114
+29	scalesreca	3079	3
+30	scalesrecb	2820	3
+31	scales	5899	3
+33	reciprocityother	6270	3
+34	reciprocityus	6276	3
+36	allowedforbidden	6292	3
+37	quotearec	3242	10
+38	quotebrec	3083	10
+40	quote	6325	10
+41	totalflagestimations	3106	10
+42	totalnoflagtimeestimations	3146	10
+44	flagdv	6341	88
+46	Sysjust	6333	75
+50	Imagineddv	6336	38
+52	partgender	5931	3
+53	IATexpart	6339	51
+54	IATexpmath	6341	56
+55	IATexp.overall	6341	113
+58	allowedforbiddena	3170	3
+59	allowedforbiddenb	3122	3
+60	anchoring1a	2600	229
+61	anchoring1b	2762	300
+62	anchoring2a	2586	243
+63	anchoring2b	2698	277
+64	anchoring3a	2863	471
+65	anchoring3b	2764	397
+66	anchoring4a	2676	255
+67	anchoring4b	2933	191
+68	artwarm	6343	102
+69	citizenship	6328	102
+70	d_donotuse	5890	5891
+71	diseaseframinga	3174	3
+72	diseaseframingb	3097	3
+76	flagsupplement1	6320	12
+77	flagsupplement2	6308	8
+78	flagsupplement3	6308	8
+91	gamblerfallacya	2977	104
+92	gamblerfallacyb	2965	67
+93	imaginedexplicit1	6323	10
+94	imaginedexplicit2	6333	10
+95	imaginedexplicit3	6323	10
+96	imaginedexplicit4	6330	10
+97	major	5117	14
+98	mathwarm	6343	102
+99	moneyagea	3236	65
+100	moneyageb	3059	64
+101	moneygendera	3241	3
+102	moneygenderb	3053	3
+103	nativelang	6316	12
+116	omdimc3	6343	3
+117	omdimc3rt	6343	5975
+118	omdimc3trt	6343	5988
+119	politicalid	6192	8
+120	quotea	3242	10
+121	quoteb	3083	10
+122	race	6011	29
+123	reciprocityothera	3196	3
+124	reciprocityotherb	3074	3
+125	reciprocityusa	3202	3
+126	reciprocityusb	3074	3
+127	scalesa	3079	7
+128	scalesb	2820	7
+129	sex	6333	3
+130	sunkcosta	3243	10
+131	sunkcostb	3087	10
+132	sysjust1	6321	8
+133	sysjust2	6317	8
+134	sysjust3	6308	8
+135	sysjust4	6316	8
+136	sysjust5	6314	8
+137	sysjust6	6315	8
+138	sysjust7	6322	8
+139	sysjust8	6327	8
+142	order	6300	3
